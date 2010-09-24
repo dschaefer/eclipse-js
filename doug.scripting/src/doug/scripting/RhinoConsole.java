@@ -1,16 +1,11 @@
 package doug.scripting;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.console.IOConsole;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.tools.shell.Main;
 
 public class RhinoConsole extends IOConsole {
@@ -33,7 +28,8 @@ public class RhinoConsole extends IOConsole {
 	}
 	
 	public void run() throws IOException {
-		Main.shellContextFactory.initApplicationClassLoader(Activator.class.getClassLoader());
+		ClassLoader classLoader = new BundleProxyClassLoader(Activator.getDefault().getBundle());
+		Main.shellContextFactory.initApplicationClassLoader(classLoader);
 		Main.setIn(getInputStream());
 		Main.setOut(new PrintStream(newOutputStream()));
 		Main.setErr(new PrintStream(newOutputStream()));
